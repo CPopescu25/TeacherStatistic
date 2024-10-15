@@ -1,0 +1,106 @@
+﻿@model TS.DTO.Data
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.QuestionsHelpDTO> list = new List<TS.DTO.QuestionsHelpDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.QuestionsHelpDTO>>();
+    
+    <table class="table table-bordered table-striped text-center" id="example2" style="border:1px solid white">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+
+
+                <th>
+                    Actions
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in list)
+            {
+                <tr>
+                    <td>
+                        @item.QuestionName
+                    </td>
+
+                    <td>
+                        <a class="glyphicon glyphicon-remove-circle tooltipNormal" data-toggle="tooltip" title="Delete!" data-id="@item.Id" onclick="deleteSQuestion(this)" style="cursor:pointer;margin-left:-10px"></a>
+                        <a data-toggle="modal" data-target="#SEdit" data-id="@item.Id" onclick="editSQuestion(this)" style="cursor:pointer;margin-left:20px"><span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit!"></span></a>
+                    </td>
+
+
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>
+                    Name
+                </th>
+
+                <th>
+                    Actions
+                </th>
+
+
+            </tr>
+        </tfoot>
+    </table>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $("#example2").DataTable({
+               "scrollCollapse": true,
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+               
+            });
+        });
+    </script>
+}
+else
+{
+    <table class="table table-bordered table-striped text-center" id="example2" style="border:1px solid white">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+
+
+                <th>
+                    Actions
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td>@Model.Message</td>
+          </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>
+                    Name
+                </th>
+
+                <th>
+                    Actions
+                </th>
+
+
+            </tr>
+        </tfoot>
+    </table>
+
+}
+
+
+   
+
+

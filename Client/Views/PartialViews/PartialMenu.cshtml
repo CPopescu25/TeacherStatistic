@@ -1,0 +1,98 @@
+﻿@model TS.DTO.GroupHelpDTO
+
+<ul class="sidebar-menu">
+
+    @if (Model.Name == "Admin")
+    {
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-folder-open"></i> <span>Settings</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+
+                <li><a href="@Url.Action("Index","Universities")"><i class="fa fa-institution"></i><span>Universities</span></a></li>
+
+                <li><a href="@Url.Action("Index","Questions")"><i class="fa fa-question"></i><span>Questions</span></a></li>
+
+                <li><a href="@Url.Action("Index","Groups")"><i class="fa fa-group"></i><span>Groups</span></a></li>
+
+            </ul>
+        </li>
+
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-users"></i> <span>Users</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+
+                <li><a href="@Url.Action("Create","User")"><i class="fa fa-plus-circle"></i><span>Add New</span></a></li>
+
+                <li><a href="@Url.Action("IndexAdmins","User")"><i class="fa fa-reorder"></i><span>Admins</span></a></li>
+
+                <li><a href="@Url.Action("IndexTeachers","User")"><i class="fa fa-users"></i><span>Teachers</span></a></li>
+
+
+                <li><a href="@Url.Action("IndexStudents","User")"><i class="fa fa-users"></i><span>Students</span></a></li>
+
+            </ul>
+        </li>
+
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-newspaper-o"></i> <span>Questionnaires</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+
+                <li><a href="@Url.Action("Create","Questionnaire")"><i class="fa fa-plus-circle"></i><span>Add New</span></a></li>
+
+                <li><a href="@Url.Action("Index","Questionnaire")"><i class="fa fa-reorder"></i><span>First type questionnaires</span></a></li>
+                <li><a href="@Url.Action("IndexSecond","Questionnaire")"><i class="fa fa-reorder"></i><span>Second type questionnaires</span></a></li>
+            </ul>
+        </li>
+
+    }
+
+    @*@if (Model.Name == "Student")
+        {
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-archive"></i> <span>Questionnaires</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="@Url.Action("QuestionnaireWithQuestionsAndAnswers","Questionnaire")"><i class="fa fa-reorder"></i><span>Answer at questionnaires</span></a></li>
+
+                </ul>
+            </li>
+        }*@
+
+    @if (Model.Name == "Teacher")
+        {
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-archive"></i> <span>Questionnaires</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="@Url.Action("TeacherQuestionnaires","Questionnaire")">
+                        <i class="fa fa-reorder"></i>
+                        <span>My questionnaires</span></a></li>
+
+                </ul>
+            </li>
+        }
+
+</ul>

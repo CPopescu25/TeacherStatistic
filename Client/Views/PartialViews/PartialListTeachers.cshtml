@@ -1,0 +1,27 @@
+﻿@model TS.DTO.Data
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.UserForPartialListDTO> list = new List<TS.DTO.UserForPartialListDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.UserForPartialListDTO>>();
+    
+    <select name="Employee" class="form-control" tabindex="-1" aria-hidden="true" id="Employee" style="max-width: 200px;">
+        @{
+            <option>Select a teacher...</option>
+    foreach (var item in list)
+    {
+        <option value="@item.Id;@item.FullName" data-id="@item.Id">@item.FullName</option>
+    }
+
+        }
+    </select>
+}
+else
+{
+    <select name="Employee" class="form-control" tabindex="-1" aria-hidden="true" id="Employee" style="max-width: 200px;">
+       <option>@Model.Message</option>
+    </select>
+}
+
+
+

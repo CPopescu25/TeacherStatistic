@@ -1,0 +1,58 @@
+﻿@model TS.DTO.UserHelpDTO
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+
+    @if (Model.Image == null)
+    {
+        <img src="~/AdminLTE-2.3.11/dist/img/user2-160x160.jpg" style="height:60px;width:160px" class="img-circle" alt="User Image" id="Image" data-id="@Model.Id" />
+        <input type="file" style="visibility:hidden;margin-top:10px;color:white;" id="txtUploadFile" name="txtUploadFile" onchange="readURL(this);" alt="User Image" />
+
+    }
+    else
+    {
+        <img src="data:image;base64,@System.Convert.ToBase64String(Model.Image)" style="height:60px;width:160px" class="img-circle" alt="User Image" id="Image" data-id="@Model.Id">
+        <input type="file" style="visibility:hidden;margin-top:10px;color:white;" id="txtUploadFile" name="txtUploadFile" onchange="readURL(this);" alt="User Image" />
+    }
+    @*<script src="~/ScriptsFunctions/UploadImage.js"></script>*@
+<script>
+    $("#Image").click(function () {
+        $("#txtUploadFile").css('visibility', 'visible');
+
+    });
+
+    function readURL(input) {
+        var imgsrc = $("#Image").attr('src');
+        var id = $("#Image").data("id");
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#Image").attr('src', e.target.result)
+                $("#txtUploadFile").css('visibility', 'hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+        var img = $("#txtUploadFile").get(0).files[0];
+        var formData = new FormData();
+        formData.append("txtUploadFile", img);
+        $.ajax({
+            url: "/PartialViews/Upload/" + id,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.Ok == true) {
+                    toastr.success(data.Message, { showDuration: 300 });
+                } else {
+                    toastr.error(data.Message, { showDuration: 300 });
+                }
+            }
+        });
+
+    }
+</script>
+
+
+

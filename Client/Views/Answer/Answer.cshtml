@@ -1,0 +1,199 @@
+﻿@model TS.DTO.Data
+
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+
+
+@if (Model == null)
+{
+    <script>
+        $(window).load(function () {
+            var id = ((location.href).split('=')[1]).split('&')[0];
+            var setType = (location.href).split('=')[2];
+           location.replace("/Answer/Login?id=" + id + "&setType=" + setType);
+        });
+    </script>
+}
+else
+    if (Model.Ok == true)
+    {
+    <!---Statistic-Details permission-->
+        <link href="~/select2-4.0.3/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="~/jQuery/jquery-2.2.3.min.js"></script>
+        <script src="~/select2-4.0.3/dist/js/select2.min.js"></script>
+
+        TS.DTO.StatisticHelpDTO data = Model.Object.ToObject<TS.DTO.StatisticHelpDTO>();
+
+        <h3 style="text-align:center">
+            Answer at this questionnaire
+        </h3>
+        <br />
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-horizontal">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="control-label">Teacher:</label>
+                                    <b id="Employee" style="font-weight:normal" data-id="@data.User_Id" data-name="@data.SetType">@data.User</b>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br />
+
+                        <div class="container-fluid">
+                            <div class="row">
+
+                                <div class="col-md-12">
+                                    <label class="control-label">Questions</label><br />
+                                    <ol>
+                                        @foreach (var i in data.List_Questions)
+                                        {
+
+
+                                            <li class="Qs" data-id="@i.Id">
+                                                @i.Question_Name<br />
+
+                                                @if (i.A1 != "null")
+                                                {
+                                                    <input type="checkbox" data-id="@i.Id" name="type" value="@i.A1" onclick="get(this)" data-value=@i.V1 /><text>&nbsp;</text><label style="font-weight:normal">@i.A1</label><br />
+                                                }
+                                                @if (i.A2 != "null")
+                                                {
+                                                    <input type="checkbox" data-id="@i.Id" name="type" value="@i.A2" onclick="get(this)" data-value=@i.V2 /><text>&nbsp;</text><label style="font-weight:normal">@i.A2</label><br />
+                                                }
+                                                @if (i.A3 != "null")
+                                                {
+                                                    <input type="checkbox" data-id="@i.Id" name="type" value="@i.A3" onclick="get(this)" data-value=@i.V3 /><text>&nbsp;</text><label style="font-weight:normal">@i.A3</label><br />
+                                                }
+                                                @if (i.A4 != "null")
+                                                {
+                                                    <input type="checkbox" data-id="@i.Id" name="type" value="@i.A4" onclick="get(this)" data-value=@i.V4 /><text>&nbsp;</text><label style="font-weight:normal">@i.A4</label><br />
+                                                }
+                                                @if (i.A5 != "null")
+                                                {
+                                                    <input type="checkbox" data-id="@i.Id" name="type" value="@i.A5" onclick="get(this)" data-value=@i.V5 /><text>&nbsp;</text><label style="font-weight:normal">@i.A5</label><br />
+                                                }
+                                            </li>
+
+
+                                        }
+                                    </ol> 
+                               </div>
+
+                            </div>
+                        </div>
+                        <br />
+                        <!----permission for respond to questionnaire-->
+                        <!----Answer-Create-->
+                        
+                            <div class="container-fluid" style="margin-top:100px">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-offset-5 col-md-10">
+                                            <input type="button" id="answer" value="Save answers" onclick="SaveAnswers()" style="height:40px;background-color:#605ca8;color:white;border:none;width:100px" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+       
+            @*<script src="~/ScriptsFunctions/AnswerAtQuestions.js"></script>*@
+    <script>
+        //Function to select one answer only for a question
+        function get(e) {
+            //get the id of the question
+            var id = $(e).data("id");
+            //create new array for all input checkboxes
+            var ck = new Array();
+            ck = document.getElementsByName("type");
+            //for each input
+            ck.forEach(function (i, el) {
+                //get only the inputs for one question (inputs id = question id)
+                if ($(i).data("id") == id) {
+                    //create new array
+                    var ans = new Array();
+                    //where push the inputs for a single question
+                    ans.push(i);
+                    //for each input
+                    ans.forEach(function (a, b) {
+                        //set first all checkboxes false
+                        a.checked = false;
+                    });
+                    //set true only the checkbox selected
+                    //only one checkbox can be selected for a question
+                    e.checked = true;
+                }
+            });
+        }
+        function SaveAnswers() {
+            var selected = [];
+            $("input:checkbox:checked").each(function () {
+                if ($(this).is(":checked") == true) {
+                    selected.push({ "QuestionsId": $(this).data("id"), "answers": $(this).val(), "value": $(this).data("value") });
+                }
+
+            });
+            var datas = {
+                User_Id: $("#Employee").data("id"),
+                StatisticAnswers: selected,
+                SetType: $("#Employee").data("name")
+            }
+            $.ajax({
+                url: "/Answer/Answer",
+                data: { data: datas },
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    if (result.Ok == true) {
+                        toastr.success(result.Message, { showDuration: 300 });
+                        setTimeout(function () {
+                            location.replace("/Home/Index");
+                        }, 3000); //second message will appear 3 seconds later
+                       
+                    } else {
+                        toastr.error(result.Message, { showDuration: 300 });
+                    }
+                },
+                error: function (a, b, c) {
+
+                }
+            })
+        }
+    </script>
+    }
+    else
+    {
+        <script>
+
+       swal({
+           title: '@Model.Message',
+           type: "warning",
+           confirmButtonColor: "#DD6B55",
+           confirmButtonText: "OK!",
+           closeOnConfirm: true
+       },
+            function (isConfirmed) {
+                if (isConfirmed) {
+                }
+                else {
+                    swal("You have not pressed OK!");
+                }
+            });
+        </script>
+
+    }
+
+
+
+
+
+
+

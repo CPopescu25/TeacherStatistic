@@ -1,0 +1,329 @@
+﻿@model TS.DTO.Data
+
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+
+
+@if (Model.Ok == true)
+{
+    TS.DTO.UserHelpDTO data=Model.Object.ToObject<TS.DTO.UserHelpDTO>();
+    
+    <section class="content-header">
+        <h3 style="text-align:center" id="Id" data-id="@data.Id">
+            Edit <br />
+        </h3><hr />
+        <ol class="breadcrumb" style="border:none">
+            <li><a href="@Url.Action("Index", "Home")"><i class="glyphicon glyphicon-home" style="font-size:x-small"></i> Home</a></li>
+          
+            <li><a href="@Url.Action("Create", "User")"><i class="glyphicon glyphicon-plus-sign" style="font-size:x-small"></i> Add New</a></li>
+      
+
+            <li class="active"><i class="glyphicon glyphicon-list" style="font-size:x-small"></i>Edit</li>
+        </ol>
+    </section>
+
+    <style>
+        .ghostPencil:hover {
+            background: url("http://icons.iconarchive.com/icons/brainleaf/free-pencil/16/pencil-color-icon.png")no-repeat right;
+            padding-right: 15px;
+            cursor: pointer;
+            width: 200px;
+            color: #605ca8;
+        }
+    </style>
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-horizontal">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="FirstName" class="control-label">First Name</label>
+                                <input type="text" class="form-control" id="FirstName" value="@data.FirstName" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="LastName" class="control-label">Last Name</label>
+                                <input type="text" class="form-control" id="LastName" value="@data.LastName" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="container-fluid">
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <label for="UserName" class="control-label">Username</label>
+                                <input type="text" class="form-control" id="Username" value="@data.UserName" disabled="disabled" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="container-fluid">
+                        <div class="row">
+                           <div class="col-md-4">
+                                <label class="control-label" style="margin-left:20px">Groups</label>
+                                <ul class="text-muted" id="profilG" style="overflow:scroll;max-height:400px;overflow-x:hidden;overflow-y:hidden;margin-left:-25px">
+                                    @if (data.groups.Count() != 0)
+                                    {
+                                        foreach (var item in data.groups)
+                                        {
+                                            <li data-id="@item.Key" class="Groups" data-name="Groups"><span class="ghostPencil editG" id="editG" data-toggle="modal" data-target="#EditGroup" onclick="EditGroup(this)" data-id="@item.Key">@item.Value</span></li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="Groups"><span class="editG" id="editG" data-toggle="modal" data-target="#EditGroup" onclick="EditGroup(this)">null</span></li>
+                                    }
+                                </ul>
+
+                            </div>
+                            @if (data.groups.Select(g => g.Value).FirstOrDefault() == "Student")
+                            {
+                                <div class="col-md-4">
+                                    <label class="control-label" style="margin-left:20px">Year</label>
+                                    <ul class="text-muted" id="profilY" style="overflow:scroll;max-height:400px;overflow-x:hidden;overflow-y:hidden;margin-left:-25px">
+                                        @if (data.Year != 0)
+                                        {
+                                            <li data-id="@data.Year" class="Years" data-name="Years"><span class="ghostPencil editY" id="editY" data-toggle="modal" data-target="#EditYear" onclick="EditYear(this)" data-id="@data.Year">@data.Year</span></li>
+
+                                        }
+                                        else
+                                        {
+                                            <li class="Years"><span class="editY" id="editY" data-toggle="modal" data-target="#EditYear" onclick="EditYear(this)">null</span></li>
+                                        }
+                                    </ul>
+
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="container-fluid">
+                        <div class="row" style="margin-top:15px;">
+                            <div class="col-md-12" style="text-align:left;margin-left:40px; font-size:135%"><strong>Contacts</strong></div>
+                        </div>
+                        <div class="row">
+                            <ul>
+                                <li>
+                                    <div class="col-md-4">
+                                        <label for="Email" class="control-label">Email address</label>
+                                        <input type="text" class="form-control" id="Email" value="@data.Email" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="Phone" class="control-label">Phone number</label>
+                                        <input type="text" class="form-control" id="Phone" value="@data.Phone" />
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="container-fluid">
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <label class="control-label" style="margin-left:20px">Univeristy</label>
+                                <ul class="text-muted" id="profilU" style="overflow:scroll;max-height:400px;overflow-x:hidden;overflow-y:hidden;margin-left:-25px">
+                                    @if (data.universities.Count() != 0)
+                                    {
+                                        foreach (var item in data.universities)
+                                        {
+                                            <li data-id="@item.Key" class="Universities" data-name="Universities"><span class="ghostPencil editU" id="editU" data-toggle="modal" data-target="#EditUniv" onclick="EditUniv(this)" data-id="@item.Key">@item.Value</span></li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="Universities"><span class="editU" id="editU" data-toggle="modal" data-target="#EditUniv" onclick="EditUniv(this)">null</span></li>
+                                    }
+                                </ul>
+                            </div>
+                      
+                        </div>
+                    </div>
+                    <br />
+                    <div style="position:center">
+                        <button class="btn btn-primary" onclick="SaveChanges()" data-id="@data.Id" style="background-color:#605ca8">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!---popups-->
+    <div class="modal fade" id="EditGroup" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close closeEditGroup" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Edit Group</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="popupEditGroup">
+
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="editGroup" style="background-color:#605ca8;color:white;" data-dismiss="modal" aria-label="Close">Select</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade" id="EditYear" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close closeEditYear" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Edit Student Year</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="popupEditYear">
+
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="editYear" style="background-color:#605ca8;color:white;" data-dismiss="modal" aria-label="Close">Select</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade" id="EditUniv" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close closeEditUniv" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Edit Universities</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="popupEditUniv">
+
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="editUniv" style="background-color:#605ca8;color:white;" data-dismiss="modal" aria-label="Close">Select</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <script src="~/ScriptsFunctions/EditGroupUser.js"></script>
+    <script src="~/ScriptsFunctions/EditYearStudent.js"></script>
+    <script src="~/ScriptsFunctions/EditUniversitiesUser.js"></script>
+    @*<script src="~/ScriptsFunctions/EditUser.js"></script>*@
+    <script>
+        function SaveChanges() {
+            var Id = $("#Id").data("id");
+            ///////PartialListUniversities
+            var domains = new Array();
+            $(".Universities").each(function (i, element) {
+                var a = $(element).data("id");
+                if (a != null) {
+                    domains.push({ "UniversityId": a, "UserId": Id });
+                }
+            });
+            if (domains.length == 0) {
+                var d = ($("#pd").text()).split(',');
+                if (d != "") {
+                    for (var i = 0; i < d.length; i++) {
+                        domains.push({ "UniversityId": d[i], "UserId": Id });
+                    }
+                } else {
+                    domains = 0;
+                }
+            }
+            //PartialListGroup
+            var groups = [];
+            $(".Groups").each(function (i, element) {
+                var a = $(element).data("id");
+                if (a != null) {
+                    groups.push({ "GroupId": a, "UserId": Id });
+                }
+            });
+
+            if (groups.length == 0) {
+                var l = $(".Group").val();
+                if (l != 0) {
+                    for (var i = 0; i < l.length; i++) {
+                        groups.push({ "GroupId": l[i], "UserId": Id });
+                    }
+                } else {
+                    groups = 0;
+                }
+            }
+            var y = $(".Years").data("id");
+            if (y == null) {
+                var y = $(".Year").val();
+            }
+
+            var datas = {
+                FirstName: $("#FirstName").val(),
+                LastName: $("#LastName").val(),
+                Email: $("#Email").val(),
+                Phone: $("#Phone").val(),
+                UserUniversity: domains,
+                UserGroup: groups,
+                Enable: true,
+                UserName: $("#Username").val(),
+                Id: Id,
+                Year: y
+            }
+
+            $.ajax({
+                url: "/User/Edit",
+                data: { user: datas },
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    if (result.Ok == true) {
+                        toastr.success(result.Message, { showDuration: 300 });
+
+                    } else {
+                        toastr.error(result.Message, { showDuration: 300 });
+                    }
+
+                },
+                error: function (a, b, c) {
+
+                }
+
+            });
+        }
+    </script>
+}
+else
+{
+    <script>
+
+        swal({
+            title: '@Model.Message',
+            type: "warning",
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "OK!",
+            closeOnConfirm: true
+        },
+             function (isConfirmed) {
+                 if (isConfirmed) {
+                 }
+                 else {
+                     swal("You have not pressed OK!");
+                 }
+             });
+    </script>
+}

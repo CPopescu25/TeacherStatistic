@@ -1,0 +1,35 @@
+﻿@model TS.DTO.Data
+
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.GroupHelpDTO> list = new List<TS.DTO.GroupHelpDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.GroupHelpDTO>>();
+    
+    <select class="form-control select2 Group" multiple data-placeholder="Select one/more group/s.." tabindex="-1" aria-hidden="true" name="Group" id="Group">
+        @{if (list != null)
+        {
+            foreach (var item in list)
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+
+        }}
+    </select>
+
+
+    <script>
+        $("#Group").select2({});
+    </script>
+}
+else
+{
+    <select class="form-control select2 Group" multiple data-placeholder="Select one/more group/s.." tabindex="-1" aria-hidden="true" name="Group" id="Group">
+       <option>@Model.Message</option>
+    </select>
+
+
+    <script>
+        $("#Group").select2({});
+    </script>
+}

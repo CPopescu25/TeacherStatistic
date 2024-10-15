@@ -1,0 +1,67 @@
+﻿@model TS.DTO.UserHelpDTO
+<link rel="stylesheet" href="~/ScriptsFunctions/StyleLogin.css" />
+
+<section class="content">
+    <form class="login">
+        <p class="title">Log in</p>
+        <input type="text" id="username" placeholder="Username..." autofocus />
+        <i class="fa fa-user"></i>
+        <input type="password" id="password" placeholder="Password" />
+        <i class="fa fa-key"></i>
+        <a href="/User/ForgotPassword" style="text-align:center;position:center">Forgot your password?</a>
+        <button id="Login">
+            <i class="spinner"></i>
+            <span class="state">Log in</span>
+        </button>
+    </form>
+
+</section>
+
+
+@*<script src="~/ScriptsFunctions/LoginHome.js"></script>*@
+<script>
+    var working = false;
+    $('.login').on('submit', function (e) {
+
+        e.preventDefault();
+        if (working) return;
+        working = true;
+        var $this = $(this),
+            $state = $this.find('button > .state');
+        $this.addClass('loading');
+        $state.html('Authenticating');
+        setTimeout(function () {
+            $this.addClass('ok');
+            $state.html('Welcome back!');
+            setTimeout(function () {
+                $state.html('Log in');
+                $this.removeClass('ok loading');
+                working = false;
+            }, 4000);
+        }, 3000);
+        var model = {
+            UserName: $('#username').val(),
+            Password: $("#password").val()
+        };
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: "/Home/LogIn",
+            data: model,
+            success: function (response) {
+                if (response.Ok == true) {
+                    toastr.success(response.Message, { showDuration: 300 });
+                    setTimeout(function () {
+                        location.replace("/Home/About");
+                    }, 3000); //second message will appear 3 seconds later
+                   
+                } else {
+                    toastr.error(response.Message, { showDuration: 300 });
+                }
+
+            },
+        });
+    });
+</script>
+

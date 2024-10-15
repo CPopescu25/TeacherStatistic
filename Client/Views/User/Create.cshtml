@@ -1,0 +1,190 @@
+﻿@model TS.Data.Context.Models.User
+
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+<link href="~/AdminLTE-2.3.11/plugins/select2/select2.css" rel="stylesheet" />
+<script src="~/AdminLTE-2.3.11/plugins/select2/select2.js"></script>
+<script src="~/AdminLTE-2.3.11/plugins/select2/select2.min.js"></script>
+
+    <section class="content-header">
+        <h3 style="text-align:center">
+            Create new user<br />
+        </h3><hr />
+        <ol class="breadcrumb" style="border:none">
+            <li><a href="@Url.Action("Index", "Home")"><i class="glyphicon glyphicon-home" style="font-size:x-small"></i> Home</a></li>
+            <li class="active"><i class="glyphicon glyphicon-plus-sign" style="font-size:x-small"></i> Add New</li>
+        </ol>
+    </section>
+    <br />
+    <section class="content" style="margin-top:50px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-horizontal">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="FirstName" class="control-label">First Name</label>
+                                <input type="text" class="form-control" id="FirstName" placeholder="First name" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="LastName" class="control-label">Last Name</label>
+                                <input type="text" class="form-control" id="LastName" placeholder="Last name" required />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                   <div class="container-fluid">
+                        <div class="row">
+                           <div class="col-md-4">
+                                <label class="control-label">Group</label><br />
+                                @Html.Action("PartialListGroup", "PartialViews")
+                            </div>
+                            
+                            <div class="col-md-2"id="SY"style="visibility:hidden;margin-left:10px;">
+                                <label class="control-label">Student year</label><br />
+                                @Html.Action("PartialYear", "PartialViews")
+                            </div>
+                            <script>
+                                $(".Group").on("change", function () {
+                                    var g = $("#Group option:selected").text();
+                                    if (g == "Student") {
+                                        $("#SY").css("visibility", "visible");
+                                    }
+                                });
+                                
+                            </script>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <div class="container-fluid">
+                        <div class="box box-primary" style="border-top-color:#605ca8;border-top:3px solid #605ca8;">
+                            <div class="box-header with-border">
+                                <label style="color:#444;font-weight:700">Contacts</label>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                        <i class="fa fa-minus famin"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="Email" class="control-label">Email address</label>
+                                        <input type="text" class="form-control" id="Email" placeholder="Email address" required />
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="Phone" class="control-label">Phone number</label>
+                                        <input type="text" class="form-control" id="Phone" placeholder="Phone number" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @Html.Action("PartialListUniversity", "PartialViews")
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+
+
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-offset-5 col-md-10">
+                                    <input type="button" id="Create" value="Save" class="btn-primary" onclick="CreateEmployee()" style="height:40px;background-color:#605ca8;color:white;border:none;width:150px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @*<script src="~/ScriptsFunctions/CreateUser.js"></script>*@
+<script>
+    function CreateEmployee() {
+        var host = ((location.href).split('/')[2]).split(':')[1];
+        if ($("#FirstName").val() == "") {
+            $("#FirstName").css("border-color", "red");
+            $("#FirstName").title = "Required!";
+        } else if ($("#LastName").val() == "") {
+            $("#LastName").css("border-color", "red");
+            $("#LastName").title = "Required!";
+        }
+        else if ($("#Email").val() == "") {
+            $("#Email").css("border-color", "red");
+            $("#Email").title = "Required!";
+        }
+        else if ($("#Phone").val() == "") {
+            $("#Phone").css("border-color", "red");
+            $("#Phone").title = "Required!";
+        }
+        else {
+            /////PartialListUniversities
+            var domains = [];
+            var d = ($("#pd").text()).split(',');
+            if (d == "") {
+                toastr.error("University is empty");
+            } else {
+                for (var i = 0; i < d.length; i++) {
+                    domains.push({ "UniversityId": d[i] })
+                }
+            }
+            ////PartialListGroup
+            var groups = [];
+            var g = $("#Group").val();
+            for (var i = 0; i < g.length; i++) {
+                groups.push({ "GroupId": g[i] });
+            }
+
+            //PartialYear
+            var year = $("#Year option:selected").val();
+
+            var datas = {
+                FirstName: $("#FirstName").val(),
+                LastName: $("#LastName").val(),
+                Email: $("#Email").val(),
+                Phone: $("#Phone").val(),
+                UserUniversity: domains,
+                UserGroup: groups,
+                Enable: true,
+                Year: year
+            }
+            $.ajax({
+                url: "/User/Create",
+                data: { data: datas, host: host },
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    if (result.Ok == true) {
+                        toastr.success(result.Message, { showDuration: 300 });
+                        setTimeout(function () {
+                            location.reload(true);
+                        }, 3000); //second message will appear 3 seconds later
+
+                    } else {
+                        toastr.error(result.Message, { showDuration: 300 });
+                    }
+
+                },
+                error: function (a, b, c) {
+
+                }
+            });
+        }
+
+    }
+</script>
+
+
+
+

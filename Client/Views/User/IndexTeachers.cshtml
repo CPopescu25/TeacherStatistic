@@ -1,0 +1,289 @@
+﻿@model TS.DTO.Data
+
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+
+<script src="~/datepicker/bootstrap-datepicker.js"></script>
+
+
+    <section class="content-header">
+        <h3 style="text-align:center">
+            Teachers<br />
+           
+        </h3><hr />
+       <ol class="breadcrumb" style="border:none">
+            <li><a href="@Url.Action("Index", "Home")"><i class="glyphicon glyphicon-home" style="font-size:x-small"></i> Home</a></li>
+
+                <li><a href="@Url.Action("Create", "User")"><i class="glyphicon glyphicon-plus-sign" style="font-size:x-small"></i> Add New</a></li>
+
+            <li class="active"><i class="glyphicon glyphicon-list" style="font-size:x-small"></i>Teachers</li>
+        </ol>
+       
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-horizontal">
+                   
+                    <div class="title" style="font-size:medium;font-weight:700">
+                        Search...
+                    </div>
+                    <table id="searchArea" style="width: 100%;">
+                       <tr>
+                                <td>
+                                    <label style="font-weight:normal;margin-right:30px">First name:</label>
+                                    <input type="text" id="FN" />
+                                </td>
+                             </tr>
+                        <tr>
+                            <td>
+                                <label style="font-weight:normal;margin-right:30px;">Last name:</label>
+                                <input type="text" id="LN" />
+                            </td>
+                        </tr>
+                            <tr>
+                                <td>
+                                    <label style="font-weight:normal;margin-right:30px;">University:</label>
+                                     @Html.Action("PartialListUniversity", "PartialViews")
+                                </td>   
+                            </tr>
+                        <tr>
+                            <td>
+                                <input type="button" id="Search" class="btn-primary" value="Search"
+                                       style="height:40px;background-color:#605ca8;color:white;border:none;width:100px;margin-bottom:10px;" />
+                                <input type="button" id="GetAll" class="btn-primary" value="Get All"
+                                       style="background-color:#605ca8;color:white;border:none;height:40px;width:100px;margin-bottom:10px;" />
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <table class="table table-bordered table-striped text-center">
+                        <tr>
+                            <td>
+                                <div id="example1"></div>
+                                <script type="text/javascript">
+                                    $(document).ready(function () {
+                                        $("#example1").kendoGrid({
+                                            dataSource: {
+                                                type: "JSON",
+                                                transport: {
+                                                    read: {
+                                                        url: "/User/SearchTeachers",
+                                                        type: "POST",
+                                                        dataType: "JSON",
+                                                        data: additionalData
+
+                                                    }
+                                                },
+                                                schema: {
+                                                    data: "Data",
+                                                    total: "Total",
+                                                    errors: "Errors"
+                                                },
+                                                pageSize: 100,
+                                                serverPaging: true,
+                                                serverFiltering: true,
+                                                serverSorting: true
+                                            },
+                                            pageable: {
+                                                refresh: true,
+                                                pageSizes: [20, 50, 100, 200, 500]
+                                            },
+                                            editable: {
+                                                confirmation: false,
+                                                mode: "inline"
+                                            },
+                                            scrollable: true,
+                                            resizable: true,
+                                            columns: [
+                                                {
+                                                    field: "FirstName",
+                                                    title: "First Name",
+                                                    headerAttributes: { style: "text-align:center" },
+                                                    attributes: { style: "text-align:center" }
+
+                                                },
+                                                {
+                                                    field: "LastName",
+                                                    title: "Last Name",
+                                                    headerAttributes: { style: "text-align:center" },
+                                                    attributes: { style: "text-align:center" }
+
+                                                },
+                                               {
+                                                    field: "Email",
+                                                    title: "Email",
+                                                    headerAttributes: { style: "text-align:center" },
+                                                    attributes: { style: "text-align:center" }
+                                                },
+                                                 {
+                                                     field: "Phone",
+                                                     title: "Phone",
+                                                     headerAttributes: { style: "text-align:center" },
+                                                     attributes: { style: "text-align:center" }
+                                                 },
+                                                  {
+                                                      field: "Id",
+                                                      title: "Actions",
+                                                      template: '<a class="glyphicon glyphicon-remove-circle tooltipNormal Delete" id="Delete" data-toggle="tooltip" title="Delete!" data-id="#=Id#" onclick="deleteEmployee(this)" style="cursor:pointer"></a><a data-toggle="modal" data-id="#=Id#" onclick="editEmployee(this)" style="cursor:pointer;margin-left:20px"><span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit!"></span></a>',
+                                                      headerAttributes: { style: "text-align:center" },
+                                                      attributes: { style: "text-align:center" }
+                                                  },
+                                                     {
+                                                         field: "Id",
+                                                         title: "Statistics",
+                                                         template: '<a data-toggle="modal" data-id="#=Id#" onclick="seeFA(this)" style="cursor:pointer;margin-left:20px"><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="About first!"></span></a><a data-toggle="modal" data-id="#=Id#" onclick="seeSA(this)" style="cursor:pointer;margin-left:20px"><span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="About second!"></span></a>',
+                                                         headerAttributes: { style: "text-align:center" },
+                                                         attributes: { style: "text-align:center" }
+                                                     },
+                                                     {
+                                                         field: "Id",
+                                                         title: "Export",
+                                                         template: '<a data-toggle="modal" data-id="#=Id#" onclick="exportS(this)" style="cursor:pointer;margin-left:20px"><span class="glyphicon glyphicon-download" data-toggle="tooltip" title="Export statistics to excel!"></span></a>',
+                                                         headerAttributes: { style: "text-align:center" },
+                                                         attributes: { style: "text-align:center" }
+                                                     }
+                                            ]
+                                        });
+                                    });
+                                </script>
+                                <style>
+                                    .k-grid-content {
+                                        min-height: 0px;
+                                        max-height: 540px;
+                                    }
+                                </style>
+
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <script type="text/javascript">
+        var id=0;
+        $(document).ready(function () {
+            var selectedIds = [];
+
+            $("#Search").click(function () {
+                var grid = $('#example1').data('kendoGrid');
+                grid.dataSource.page(1); // new search. Set page to 1
+                grid.dataSource.read();
+
+                id = 0;
+                selectedIds = [];
+                return false;
+            });
+        });
+
+        $(document).ready(function () {
+            var selectedIds = [];
+
+            $("#GetAll").click(function () {
+                var grid = $('#example1').data('kendoGrid');
+                grid.dataSource.page(1); // new search. Set page to 1
+                grid.dataSource.read();
+
+                id=1;
+                selectedIds = [];
+                return false;
+            });
+        });
+
+        function additionalData() {
+            var domains = [];
+            var d = ($("#pd").text()).split(',');
+            for (var i = 0; i < d.length; i++) {
+                    domains.push(d[i]);
+                };
+           
+           return {
+                data: domains,
+                FirstName: $("#FN").val(),
+                LastName: $("#LN").val(),
+                GetAll:id
+            };
+        }
+    </script>
+
+        @*<script src="~/ScriptsFunctions/DeleteUser.js"></script>*@
+<script>
+    function deleteEmployee(e) {
+        var Id = $(e).data("id");
+        swal({
+            title: "Are you sure you want to disable this User?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes!",
+            cancelButtonText: "No,cancel!",
+            closeOnCancel: false,
+            closeOnConfirm: true
+        },
+            function (isConfirmed) {
+                if (isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/User/Delete/" + Id,
+                        dataType: "html",
+                        success: function (result) {
+                            if (JSON.parse(result)["Ok"] == true) {
+                                toastr.success(JSON.parse(result)["Message"], { showDuration: 300 });
+
+                            } else {
+                                toastr.error(JSON.parse(result)["Message"], { showDuration: 300 });
+                            }
+                        }
+                    });
+                }
+                else {
+                    swal("Cancelled", "You have pressed cancel!");
+                }
+                location.reload(true);
+            });
+
+    }
+</script>
+
+        <script src="~/ScriptsFunctions/RedirectToEditUser.js"></script>
+
+    <script src="~/ScriptsFunctions/SeeAnswersForTeachers.js"></script>
+
+        @*<script src="~/ScriptsFunctions/ExportStatistics.js"></script>*@
+<script>
+    function exportS(e) {
+        var id = $(e).data("id");
+
+        $.ajax({
+            url: "/Questionnaire/ExportByTeacherId",
+            data: { id: id },
+            type: "POST",
+            dataType: "json",
+            success: function (result) {
+                if (result.Ok == true) {
+                    toastr.success(result.Message, { showDuration: 300 });
+
+                } else {
+                    toastr.error(result.Message, { showDuration: 300 });
+                }
+
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+
+    }
+
+</script>
+
+
+
+

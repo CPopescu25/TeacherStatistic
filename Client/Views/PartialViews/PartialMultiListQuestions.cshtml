@@ -1,0 +1,36 @@
+﻿@model TS.DTO.Data
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.QuestionsHelpDTO>list=new List<TS.DTO.QuestionsHelpDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.QuestionsHelpDTO>>();
+    
+    <select class="row select2 Questions" style="min-width:200px" multiple data-placeholder="Select one/more question/s.." tabindex="-1" aria-hidden="true" name="Questions" id="Questions">
+        @foreach (var item in list)
+        {
+            <option value="@item.Id">@item.QuestionName</option>
+        }
+
+
+    </select>
+
+    <script>
+        $("#Questions").select2();
+    </script>
+}
+else
+{
+    <select class="row select2 Questions" style="min-width:200px" multiple data-placeholder="Select one/more question/s.." tabindex="-1" aria-hidden="true" name="Questions" id="Questions">
+       <option>@Model.Message</option>
+
+    </select>
+
+    <script>
+        $("#Questions").select2();
+    </script>
+}
+
+
+
+
+

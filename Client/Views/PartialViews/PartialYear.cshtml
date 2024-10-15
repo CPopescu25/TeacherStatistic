@@ -1,0 +1,18 @@
+﻿@model Dictionary<string, string>
+
+<select name="Year" class="form-control Year" tabindex="-1" aria-hidden="true" id="Year" style="max-width: 200px;">
+    <option>Select a year...</option>
+    @{
+        foreach (var item in Model)
+        {
+            <option value="@item.Value" data-id="@item.Key">@item.Key</option>
+        }
+
+    }
+</select>
+
+
+
+
+
+

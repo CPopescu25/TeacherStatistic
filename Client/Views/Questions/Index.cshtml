@@ -1,0 +1,606 @@
+﻿
+@model TS.DTO.Data
+
+
+
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+<script src="~/datepicker/bootstrap-datepicker.js"></script>
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.QuestionsHelpDTO>list=new List<TS.DTO.QuestionsHelpDTO>();
+    list=Model.Object.ToObject<List<TS.DTO.QuestionsHelpDTO>>();
+    
+    <section class="content-header">
+        <h3 style="text-align:center">
+            Questions<br />
+        </h3><hr />
+
+        <ol class="breadcrumb" style="border:none;">
+            <li><a href="@Url.Action("Index", "Home")"><i class="glyphicon glyphicon-home" style="font-size:x-small"></i> Home</a></li>
+            <li class="active"><i class="glyphicon glyphicon-list" style="font-size:x-small"></i>All Questions</li>
+        </ol>
+    </section>
+    <script>
+        var LoadSecondSetQuestions = false;
+
+    </script>
+    <section class="content">
+        <div class="row">
+            <div class="box box-primary" style="border-top-color:#605ca8">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active" style="border-top:none"><a aria-expanded="true" href="#firstSet" data-toggle="tab">First Set Questions</a></li>
+                        <li class="" style="border-top:none"><a aria-expanded="false" href="#secondSet" data-toggle="tab" onclick="loadSecondSetQuestions()">Second Set Questions</a></li>
+                    </ul>
+                    <br />
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="firstSet" style="min-height:700px">
+                          
+                            <a class="btn pull-right" data-toggle="modal" data-target="#CreateFQ" onclick="createQFirst()"><i class="glyphicon glyphicon-plus-sign"><text style="font-family:'Source Sans Pro'">Add New</text></i></a>
+                         
+                            <!----->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal">
+                                        <table class="table table-bordered table-striped text-center" id="example1" style="border:1px solid white">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Name
+                                                    </th>
+
+
+                                                    <th>
+                                                        Actions
+                                                    </th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in list)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @item.QuestionName
+                                                        </td>
+
+                                                        <td>
+                                                            <a class="glyphicon glyphicon-remove-circle tooltipNormal" data-toggle="tooltip" title="Delete!" data-id="@item.Id" onclick="deleteFQuestion(this)" style="cursor:pointer;margin-left:-10px"></a>
+                                                           <a data-toggle="modal" data-target="#FEdit" data-id="@item.Id" onclick="editFQuestion(this)" style="cursor:pointer;margin-left:20px"><span class="glyphicon glyphicon-pencil" data-toggle="tooltip" title="Edit!"></span></a>
+                                                          
+                                                        </td>
+
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>
+                                                        Name
+                                                    </th>
+
+                                                    <th>
+                                                        Actions
+                                                    </th>
+
+
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end first set questions tab-->
+                        <div class="tab-pane fade" id="secondSet" style="min-height:715px">
+                           
+                            <a class="btn pull-right" data-toggle="modal" data-target="#CreateSQ" onclick="createQSecond(this)"><i class="glyphicon glyphicon-plus-sign"><text style="font-family:'Source Sans Pro'">Add New</text></i></a>
+                         
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-horizontal" id="intSecond">
+
+                                        <script>
+                                            function loadSecondSetQuestions() {
+                                                if (LoadSecondSetQuestions == false) {
+                                                    $("#intSecond").html("<div><i class='fa fa-refresh fa-spin'></i>Loading...</div>");
+                                                    $.ajax({
+                                                        type: "GET",
+                                                        url: "/Questions/PartialSecondIndex",
+                                                        dataType: "html",
+                                                        success: function (result) {
+                                                            $("#intSecond").html(result);
+
+                                                        }
+                                                    });
+                                                    LoadSecondSetQuestions = true;
+                                                }
+                                            }
+
+                                        </script>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+        $(function () {
+            $("#example1").DataTable({
+                "scrollY": "500px",
+                "scrollCollapse": true,
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "scrollX": true
+            });
+        });
+
+    </script>
+
+    
+          <!----modals popup-->
+        <div class="modal fade" id="FEdit" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close closeEditQF" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Edit Question</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="popupEditFQ">
+
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="Fedit"data-dismiss="modal" style="background-color:#605ca8;color:white;">Save changes</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal fade" id="SEdit" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close closeEditQS" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Edit Question</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="popupEditSQ">
+
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="Sedit"data-dismiss="modal" style="background-color:#605ca8;color:white;">Save changes</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    
+        <div class="modal fade" id="CreateFQ" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Create new question</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="popupFCreate"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="Fcreate"data-dismiss="modal" style="background-color:#605ca8;color:white;">Save</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal fade" id="CreateSQ" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title">Create new question</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="popupSCreate"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="Screate"data-dismiss="modal" style="background-color:#605ca8;color:white;">Save</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+   
+        @*<script src="~/ScriptsFunctions/CreateQuestionFirstSet.js"></script>*@
+    <script>
+        //create new question
+        function createQFirst() {
+            var mfq = document.getElementById("CreateFQ");
+            var spanfq = document.getElementsByClassName("close")[0];
+            spanfq.onclick = function () {
+                mfq.style.display = "none";
+                $('.popupFCreate').html(" ");
+            }
+            $.ajax({
+                type: "GET",
+                url: "/Questions/PartialCreate",
+                success: function (result) {
+                    $(result).appendTo('.popupFCreate');
+
+                },
+            });
+
+            $("#Fcreate").click(function () {
+
+                var V1 = parseInt($("#FV1").val());
+                var V2 = parseInt($("#FV2").val());
+                var V3 = parseInt($("#FV3").val());
+                var V4 = parseInt($("#FV4").val());
+                var V5 = parseInt($("#FV5").val());
+                var datas = {
+                    QuestionName: $("#FQName").val(),
+                    A1: $("#FA1").val(),
+                    A2: $("#FA2").val(),
+                    A3: $("#FA3").val(),
+                    A4: $("#FA4").val(),
+                    A5: $("#FA5").val(),
+                    V1: V1,
+                    v2: V2,
+                    V3: V3,
+                    V4: V4,
+                    V5: V5,
+                    SetType: 1
+                }
+
+                $.ajax({
+                    url: "/Questions/Create",
+                    data: datas,
+                    type: "POST",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.Ok == true) {
+                            toastr.success(result.Message, { showDuration: 300 });
+
+                        } else {
+                            toastr.error(result.Message, { showDuration: 300 });
+                        }
+                    },
+                    error: function (a, b, c) {
+
+                    }
+                });
+                mfq.style.display = "none";
+
+                location.reload(true);
+
+            });
+        }
+    </script>
+    @*<script src="~/ScriptsFunctions/CreateQuestionSecondSet.js"></script>*@
+    <script>
+        //create new question
+        function createQSecond() {
+            var msq = document.getElementById("CreateSQ");
+            var spansq = document.getElementsByClassName("close")[0];
+            spansq.onclick = function () {
+                msq.style.display = "none";
+                $('.popupSCreate').html(" ");
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/Questions/PartialCreate",
+                success: function (result) {
+                    $(result).appendTo('.popupSCreate');
+
+                },
+            });
+            $("#Screate").click(function () {
+                var V1 = parseInt($("#FV1").val());
+                var V2 = parseInt($("#FV2").val());
+                var V3 = parseInt($("#FV3").val());
+                var V4 = parseInt($("#FV4").val());
+                var V5 = parseInt($("#FV5").val());
+                var datas = {
+                    QuestionName: $("#FQName").val(),
+                    A1: $("#FA1").val(),
+                    A2: $("#FA2").val(),
+                    A3: $("#FA3").val(),
+                    A4: $("#FA4").val(),
+                    A5: $("#FA5").val(),
+                    V1: V1,
+                    V2: V2,
+                    V3: V3,
+                    V4: V4,
+                    V5: V5,
+                    SetType: 2
+
+                }
+                $.ajax({
+                    url: "/Questions/Create",
+                    data: datas,
+                    type: "POST",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.Ok == true) {
+                            toastr.success(result.Message, { showDuration: 300 });
+                            $("#intSecond").load("/Questions/PartialSecondIndex");
+
+                        } else {
+                            toastr.error(result.Message, { showDuration: 300 });
+                        }
+                    },
+                    error: function (a, b, c) {
+
+                    }
+                });
+                msq.style.display = "none";
+
+
+            });
+        }
+    </script>
+    
+        @*<script src="~/ScriptsFunctions/EditQuestionFirstSet.js"></script>*@
+    <script>
+        function editFQuestion(e) {
+            var modalppe = document.getElementById("FEdit");
+            var spane = document.getElementsByClassName("closeEditQF")[0];
+            spane.onclick = function () {
+                modalppe.style.display = "none";
+                $('.popupEditFQ').html(" ");
+            }
+            var id = $(e).data("id");
+
+            $.ajax({
+                type: "GET",
+                url: "/Questions/PartialEdit/" + id,
+                success: function (result) {
+                    $(result).appendTo('.popupEditFQ');
+
+                },
+            });
+
+            $("#Fedit").click(function () {
+                var v1 = parseInt($("#Fv1").val());
+                var v2 = parseInt($("#Fv2").val());
+                var v3 = parseInt($("#Fv3").val());
+                var v4 = parseInt($("#v4").val());
+                var v5 = parseInt($("#v5").val());
+                var datas = {
+                    QuestionName: $("#FName").val(),
+                    A1: $("#Fa1").val(),
+                    A2: $("#Fa2").val(),
+                    A3: $("#Fa3").val(),
+                    A4: $("#a4").val(),
+                    A5: $("#a5").val(),
+                    V1: v1,
+                    V2: v2,
+                    V3: v3,
+                    V4: v4,
+                    V5: v5,
+                    Id: id,
+                    SetType: 1
+                }
+                $.ajax({
+                    url: "/Questions/Edit/" + id,
+                    data: datas,
+                    type: "POST",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.Ok == true) {
+                            toastr.success(result.Message, { showDuration: 300 });
+
+                        } else {
+                            toastr.error(result.Message, { showDuration: 300 });
+                        }
+
+                    },
+                    error: function (a, b, c) {
+
+                    }
+                })
+                modalppe.style.display = "none";
+                $('.popupEditFQ').html(" ");
+
+            });
+        }
+    </script>
+    @*<script src="~/ScriptsFunctions/EditQuestionSecondSet.js"></script>*@
+    <script>
+        function editSQuestion(e) {
+            var modalppes = document.getElementById("SEdit");
+            var spanes = document.getElementsByClassName("closeEditQS")[0];
+            spanes.onclick = function () {
+                modalppes.style.display = "none";
+                $('.popupEditSQ').html(" ");
+            }
+            var ids = $(e).data("id");
+
+            $.ajax({
+                type: "GET",
+                url: "/Questions/PartialEdit/" + ids,
+                success: function (result) {
+                    $(result).appendTo('.popupEditSQ');
+
+                },
+            });
+
+            $("#Sedit").click(function () {
+                var v1 = parseInt($("#Fv1").val());
+                var v2 = parseInt($("#Fv2").val());
+                var v3 = parseInt($("#Fv3").val());
+                var v4 = parseInt($("#v4").val());
+                var v5 = parseInt($("#v5").val());
+                var datass = {
+                    QuestionName: $("#FName").val(),
+                    A1: $("#Fa1").val(),
+                    A2: $("#Fa2").val(),
+                    A3: $("#Fa3").val(),
+                    A4: $("#a4").val(),
+                    A5: $("#a5").val(),
+                    V1: v1,
+                    V2: v2,
+                    V3: v3,
+                    V4: v4,
+                    V5: v5,
+                    Id: ids,
+                    SetType: 2
+                }
+                $.ajax({
+                    url: "/Questions/Edit/" + ids,
+                    data: datass,
+                    type: "POST",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.Ok == true) {
+                            toastr.success(result.Message, { showDuration: 300 });
+                            $("#intSecond").load("/Questions/PartialSecondIndex");
+                        } else {
+                            toastr.error(result.Message, { showDuration: 300 });
+                        }
+
+                    },
+                    error: function (a, b, c) {
+
+                    }
+                })
+                modalppes.style.display = "none";
+                $('.popupEditSQ').html(" ");
+
+            });
+        }
+    </script>
+    
+        @*<script src="~/ScriptsFunctions/DeleteQuestionFirstSet.js"></script>*@
+    <script>
+        //Actions for first set of questions
+        function deleteFQuestion(e) {
+            var Id = $(e).data("id");
+            swal({
+                title: "Are you sure you want to delete this Question?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes!",
+                cancelButtonText: "No,cancel!",
+                closeOnCancel: true,
+                closeOnConfirm: true
+            },
+                function (isConfirmed) {
+                    if (isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Questions/Delete/" + Id,
+                            dataType: "html",
+                            success: function (result) {
+                                if (JSON.parse(result)["Ok"] == true) {
+                                    toastr.success(JSON.parse(result)["Message"], { showDuration: 300 });
+
+
+                                } else {
+                                    toastr.error(JSON.parse(result)["Message"], { showDuration: 300 });
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        swal("Cancelled", "You have pressed cancel!");
+                    }
+                    location.reload(true);
+                });
+
+        }
+    </script>
+        @*<script src="~/ScriptsFunctions/DeleteQuestionSecondSet.js"></script>*@
+    <script>
+        //Actions for second set of questions
+        function deleteSQuestion(e) {
+            var Id = $(e).data("id");
+            swal({
+                title: "Are you sure you want to delete this Question?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes!",
+                cancelButtonText: "No,cancel!",
+                closeOnCancel: true,
+                closeOnConfirm: true
+            },
+                function (isConfirmed) {
+                    if (isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Questions/Delete/" + Id,
+                            dataType: "html",
+                            success: function (result) {
+                                if (JSON.parse(result)["Ok"] == true) {
+                                    toastr.success(JSON.parse(result)["Message"], { showDuration: 300 });
+                                    $("#intSecond").load("/Questions/PartialSecondIndex");
+                                } else {
+                                    toastr.error(JSON.parse(result)["Message"], { showDuration: 300 });
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        swal("Cancelled", "You have pressed cancel!");
+                    }
+
+                });
+
+        }
+    </script>
+
+}
+else
+{
+    <script>
+
+        swal({
+            title: '@Model.Message',
+            type: "warning",
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "OK!",
+            closeOnConfirm: true
+        },
+             function (isConfirmed) {
+                 if (isConfirmed) {
+                 }
+                 else {
+                     swal("You have not pressed OK!");
+                 }
+             });
+    </script>
+}

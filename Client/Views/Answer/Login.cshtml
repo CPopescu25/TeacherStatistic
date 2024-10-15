@@ -1,0 +1,29 @@
+﻿@model TS.Data.Context.Models.User
+
+<link rel="stylesheet" href="~/ScriptsFunctions/StyleLogin.css" />
+
+
+<section class="content">
+    <form class="login">
+        <p class="title">Log in</p>
+        <input type="text" id="username" placeholder="Username..." autofocus />
+        <i class="fa fa-user"></i>
+        <input type="password" id="password" placeholder="Password" />
+        <i class="fa fa-key"></i>
+        <a href="/User/ForgotPassword" style="text-align:center;position:center">Forgot your password?</a>
+        <button id="Login">
+            <i class="spinner"></i>
+            <span class="state">Log in</span>
+        </button>
+    </form>
+
+</section>
+
+
+<script src="~/ScriptsFunctions/LoginInAnswer.js"></script>
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+﻿@model TS.DTO.Data
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.UserForPartialListDTO> list = new List<TS.DTO.UserForPartialListDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.UserForPartialListDTO>>();
+    
+    <select class="form-control select2 Employees" multiple data-placeholder="Select one/more student/s.." tabindex="-1" aria-hidden="true" name="Employees" id="Employees" style="min-width: 200px;">
+        @foreach (var item in list)
+        {
+            <option value="@item.Id;@item.Email;@item.FullName">@item.FullName</option>
+        }
+
+
+    </select><br />
+   <input type="button" id="getAllStds" value="Select all students" style="height:30px;background-color:#605ca8;color:white;border:none;margin-top:20px;" />
+
+
+        <script>
+        $("#Employees").select2();
+
+        $("#getAllStds").click(function () {
+            $(this).data('clicked', true);
+            $("#Employees option").attr('selected', 'selected');
+            $("#Employees").select2({
+            });
+            $("#Employees").attr('disabled', true);
+        });
+    </script>
+}
+    else
+    {
+    <select class="form-control select2 Employees" multiple data-placeholder="Select one/more student/s.." tabindex="-1" aria-hidden="true" name="Employees" id="Employees" style="max-width: 200px;">
+        <option>@Model.Message</option>
+
+
+    </select>
+
+
+
+    <script>
+        $("#Employees").select2({
+        });
+    </script>
+    }
+
+
+
+

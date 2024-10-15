@@ -1,0 +1,152 @@
+﻿
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+@model TS.DTO.Data
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.JsTreeFormatDTO> list = new List<TS.DTO.JsTreeFormatDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.JsTreeFormatDTO>>();
+    
+    <section class="content-header">
+        <h1 style="text-align:center;">
+            Universities
+        </h1>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active"><i class="fa fa-institution"></i> Universities</li>
+        </ol>
+    </section>
+
+    <section class="content" style="margin-left:20px">
+        <div class="col-md-7 col-sm-8 col-xs-8">
+
+           
+            <button type="button" style="background-color:#605ca8;color:white" class="btn btn-sm" onclick="demo_create();"><i class="glyphicon glyphicon-plus-sign"></i> Create subDomain</button>
+            <button type="button" style="background-color:#605ca8;color:white" class="btn btn-sm" id="btnCreateNode" onclick="CreateNode()"><i class="glyphicon glyphicon-plus-sign"></i> Create domain</button>
+            <script src="~/ScriptsFunctions/CreateUniversity.js"></script>
+
+
+                <button type="button" class="btn btn-warning btn-sm" onclick="demo_rename();"><i class="glyphicon glyphicon-pencil"></i> Rename</button>
+
+                <script src="~/ScriptsFunctions/EditUniversity.js"></script>
+
+            <button type="button" class="btn btn-danger btn-sm" onclick="demo_delete();"><i class="glyphicon glyphicon-remove-circle"></i> Delete</button>
+
+            @*<script src="~/ScriptsFunctions/DeleteUniversity.js"></script>*@
+            <script>
+                function demo_delete() {
+                    var ref = $('#jstree_demo').jstree(true),
+                        sel = ref.get_selected();
+                    if (!sel.length) { return false; }
+                    ref.delete_node(sel);
+                    $.ajax({
+                        type: 'post',
+                        url: url + '/Universities/Delete/' + sel,
+                        success: function (result) {
+                            if (result.Ok == true) {
+                                toastr.success(result.Message, { showDuration: 300 });
+                            } else {
+                                swal({
+                                    title: result.Message,
+                                    type: "warning",
+                                    confirmButtonColor: "#DD6B55",
+                                    confirmButtonText: "OK!",
+                                    closeOnConfirm: true
+                                },
+                                    function (isConfirmed) {
+                                        if (isConfirmed) {
+                                        }
+                                        else {
+                                            swal("You have not pressed OK!");
+                                        }
+                                    });
+                            }
+                        }
+                    });
+                };
+            </script>
+
+
+            <input type="text" value="" style="box-shadow:inset 0 0 4px #eee;margin-left:5px; padding:6px 12px; border-radius:4px; border:1px solid silver; font-size:1.1em;" id="demo_q" placeholder="Search">
+        </div>
+        <div class="col-md-12" style="margin-top:10px">
+            <div id="jstree_demo" class="demo jstree jstree-1 jstree-default" style="min-height:400px;height:80%;background-color:#ecf0f5; overflow:scroll;" role="tree" aria-multiselectable="true" tabindex="0" aria-activedescendant="demo_root_1" aria-busy="false">
+            </div>
+            <div id="event_result"></div>
+        </div>
+    </section>
+    <style>
+        .green {
+            color: #605ca8;
+        }
+    </style>
+    <script>
+        var Data = @Html.Raw(Json.Encode(list));
+        var url= window.location.origin;
+
+        $(function () {
+            var to = false;
+            $('#demo_q').keyup(function () {
+                if(to) { clearTimeout(to); }
+                to = setTimeout(function () {
+                    var v = $('#demo_q').val();
+                    $('#jstree_demo').jstree(true).search(v);
+                }, 250);
+            });
+
+            $('#jstree_demo')
+             .jstree({
+                 "core" : {
+                     "animation" : 0,
+                     "check_callback" : true,
+                     'force_text' : true,
+                     "themes" : { "stripes" : true },
+                     'data' : Data
+                 },
+                 "types" : {
+                     "#" : { "max_children" : 1000, "max_depth" : 1000, "valid_children" : ["default"] },
+                     "root" : { "icon" : "fa fa-circle green", "valid_children" : ["default"] },
+                     "default" : { "icon" : "fa fa-circle green","valid_children" : ["default","file"] },
+                     "file" : { "icon" : "fa fa-circle green", "valid_children" : [] }
+                 },
+                 "plugins" : [ "contextmenu", "search", "state", "types", "wholerow" ]
+             });
+        });
+    </script>
+}
+else
+{
+    <script>
+
+        swal({
+            title: '@Model.Message',
+            type: "warning",
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "OK!",
+            closeOnConfirm: true
+        },
+             function (isConfirmed) {
+                 if (isConfirmed) {
+                 }
+                 else {
+                     swal("You have not pressed OK!");
+                 }
+             });
+    </script>
+}
+
+
+
+
+
+
+

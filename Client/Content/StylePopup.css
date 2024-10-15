@@ -1,0 +1,108 @@
+﻿ /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 100px;
+        /*top: 500px;*/
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+    @media (min-width:900px){
+        .modalQ,.modalCQ,.modalQEI,.modalCQEI{
+        display: none; 
+        position: fixed;
+        z-index: 1; 
+        padding-top: 50px; 
+        left: 100px;
+        top: 50px;
+        width: 70%; 
+        height: 70%;
+        overflow: auto; 
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0); 
+    }
+        .modalCQJS,.modalQJS{
+        display: none; 
+        position: fixed;
+        z-index: 1; 
+        padding-top: 50px; 
+        left: 100px;
+        top: 50px;
+        width: 70%; 
+        height: 70%;
+        overflow: auto; 
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0); 
+    }
+         .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+    }
+    }
+    .modalQ,.modalCQ,.modalQEI,.modalCQEI{
+        display: none; 
+        position: fixed;
+        z-index: 1; 
+        padding-top: 100px; 
+        left: 300px;
+        top: 100px;
+        width: 100%; 
+        height: 100%;
+        overflow: auto; 
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0); 
+    }
+    .modalCQJS,.modalQJS{
+        display: none; 
+        position: fixed;
+        z-index: 1; 
+        padding-top: 100px; 
+        left: 300px;
+        top: 100px;
+        width: 100%; 
+        height: 100%;
+        overflow: auto; 
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0); 
+    }
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 70%;
+    }
+
+   
+    .closeEditE,.closeDetailsE,.closeEditQ,.closeCreateQ,.closeSeeE,.closeSeeEI,.closeSeeJS,.closeEditQEI,.closeCreateQEI,.closeEditSEI,.closeEditQJS,.closeCreateQJS,.closeEditSJS{
+            background:#914f90;
+            color: #FFFFFF;
+            line-height: 25px;
+            position: absolute;
+            right: 1px;
+            text-align: center;
+            top: -1px;
+            width: 24px;
+            text-decoration: none;
+            font-weight: bold;
+            -webkit-border-radius: 12px;
+            -moz-border-radius: 12px;
+            border-radius: 12px;
+            -moz-box-shadow: 1px 1px 3px #000;
+            -webkit-box-shadow: 1px 1px 3px #000;
+            box-shadow: 1px 1px 3px #000;
+        }
+
+            .closeEditE,.closeDetailsE,.closeEditQ,.closeCreateQ,.closeSeeE,.closeSeeEI,.closeCreateQEI,.closeEditQEI,.closeEditSEI,.closeEditQJS,.closeCreateQJS,.closeEditSJS:hover {
+                background: #f9eaca;
+            }   
+

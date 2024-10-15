@@ -1,0 +1,17 @@
+﻿@model Dictionary<string, string>
+
+<select name="SetType" class="form-control SetType" tabindex="-1" aria-hidden="true" id="SetType" style="max-width: 200px;">
+    <option>Select a type...</option>
+     @{
+        foreach (var item in Model)
+        {
+            <option value="@item.Value" data-id="@item.Key">@item.Key</option>
+        }
+
+    }
+</select>
+
+
+
+
+

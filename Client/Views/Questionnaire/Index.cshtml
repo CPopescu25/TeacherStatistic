@@ -1,0 +1,183 @@
+﻿@model TS.DTO.Data
+
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+<link rel="stylesheet" type="text/css" href="~/Content/StylePopup.css" />
+
+
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.StatisticHelpDTO> list = new List<TS.DTO.StatisticHelpDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.StatisticHelpDTO>>();
+    
+    <section class="content-header">
+        <h3 style="text-align:center">
+            All Questionnaires<br />
+        </h3><hr />
+        <ol class="breadcrumb pull-right" style="border:none;">
+            <li><a href="@Url.Action("Index", "Home")"><i class="glyphicon glyphicon-home" style="font-size:x-small"></i> Home</a></li>
+          
+            <li><a href="@Url.Action("Create", "Questionnaire")"><i class="glyphicon glyphicon-plus-sign" style="font-size:x-small"></i> Add New</a></li>
+         
+
+            <li class="active"><i class="glyphicon glyphicon-list" style="font-size:x-small"></i>All Questionnaires</li>
+        </ol>
+    </section>
+    <br />
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-horizontal">
+                    <table class="table table-bordered table-striped text-center" id="example1" style="border:1px solid white">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Add Date
+                                </th>
+                                <th>
+                                    Teacher
+                                </th>
+                               <th>
+                                    Number of students who respond to questionnaire
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in list)
+                            {
+                                <tr>
+                                    <td>
+                                        <div id="A" data-id="@item.AddDate">@item.AddDate</div>
+                                    </td>
+                                    <td>
+                                        <div id="e" data-id="@item.User" data-name="@item.SetType">@item.User</div>
+                                    </td>
+                                    <td>
+                                        @item.CountStudents
+                                    </td>
+                                    <td>
+                                     
+                                        <a class="glyphicon glyphicon-remove-circle tooltipNormal Delete" id="Delete" data-toggle="tooltip" title="Delete!" data-id="@item.Id" onclick="deleteSurvey(this)" style="cursor:pointer"></a><text>&nbsp;</text>
+                                    
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>
+                                    Add Date
+                                </th>
+                                <th>
+                                    Teacher 
+                                </th>
+                                <th>
+                                    Number of students who respond to questionnaire
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+        $(function () {
+            $("#example1").DataTable({
+                "scrollY": "500px",
+                "scrollCollapse": true,
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "scrollX": true,
+                "order": [[1, "desc"]]
+            });
+        });
+    </script>
+
+
+
+    <style>
+        .tooltipNormal + .tooltip > .tooltip-inner {
+            background-color: #ffffe6;
+            font-size: 10px;
+            font-family: 'Source Sans Pro';
+            width: 50px;
+            height: 20px;
+            top: 5px;
+            color: black;
+        }
+    </style>
+  
+        @*<script src="~/ScriptsFunctions/DeleteQuestionnaire.js"></script>*@
+    <script>
+        function deleteSurvey(e) {
+            var Id = $(e).data("id");
+
+            swal({
+                title: "Are you sure you want to delete this questionnaire?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes!",
+                cancelButtonText: "No,cancel!",
+                closeOnCancel: false,
+                closeOnConfirm: true
+            },
+                function (isConfirmed) {
+                    if (isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Questionnaire/Delete/" + Id,
+                            dataType: "html",
+                            success: function (result) {
+                                if (JSON.parse(result)["Ok"] == true) {
+                                    toastr.success(JSON.parse(result)["Message"], { showDuration: 300 });
+
+                                } else {
+                                    toastr.error(JSON.parse(result)["Message"], { showDuration: 300 });
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        swal("Cancelled", "You have pressed cancel!");
+                    }
+                    location.reload(true);
+                })
+
+        }
+    </script>
+
+}
+else
+{
+    <script>
+
+        swal({
+            title: '@Model.Message',
+            type: "warning",
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "OK!",
+            closeOnConfirm: true
+        },
+             function (isConfirmed) {
+                 if (isConfirmed) {
+                 }
+                 else {
+                     swal("You have not pressed OK!");
+                 }
+             });
+    </script>
+}
+
+
+

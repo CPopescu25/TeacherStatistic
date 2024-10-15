@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html style="height:auto;min-height:100%;">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>@ViewBag.Title  Statistics </title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport" />
+    @*@Styles.Render("~/Content/css")*@
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/datepicker/bootstrap-datepicker.js"></script>
+    <!-------toastr-->
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <script src="~/Scripts/toastr.min.js"></script>
+    <link rel="stylesheet" href="~/AdminLTE-2.3.11/bootstrap/css/bootstrap.min.css" />
+    <link href="~/AdminLTE-2.3.11/dist/css/skins/skin-purple.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/AdminLTE-2.3.11/dist/css/AdminLTE.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="~/AdminLTE-2.3.11/plugins/datatables/dataTables.bootstrap.css" />
+
+    @*<link rel="stylesheet" href="~/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="~/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="~/styles/kendo.silver.mobile.min.css"/>*@
+    <link rel="stylesheet" href="~/Content/kendo/2014.1.318/kendo.common.min.css"/>
+    <link rel="stylesheet" href="~/Content/kendo/2014.1.318/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="~/Content/kendo/2014.1.318/kendo.silver.mobile.min.css"/>
+
+    @*<script src="~/js/jquery.min.js"></script>
+    <script src="~/js/kendo.all.min.js"></script>*@
+    <script src="~/Scripts/kendo/2014.1.318/jquery.min.js"></script>
+    <script src="~/Scripts/kendo/2014.1.318/kendo.web.min.js"></script>
+</head>
+
+<body class="skin-purple sidebar-mini fixed" style="height:auto">
+
+    <div class="wrapper" style="height:auto">
+        <header class="main-header">
+            <a href="@Url.Action("Index","Home")" class="logo">
+                <span class="logo-lg" style="text-align:center"><b style="text-align:center">Statistics</b></span>
+            </a>
+            <nav class="navbar navbar-static-top">
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                </a>
+                <div class="navbar-custom-menu">
+                    <style>
+                        .tooltipNormal + .tooltip > .tooltip-inner {
+                            background-color: #ffffe6;
+                            font-size: 10px;
+                            font-family: 'Source Sans Pro';
+                            width: 50px;
+                            height: 20px;
+                            top: 5px;
+                            color: black;
+                        }
+                    </style>
+                    <ul class="nav navbar-nav">
+                        <!----------Notification menu-->
+                        @if (HttpContext.Current.Session["Username"] != null)
+                        {
+                            <li class="dropdown notifications-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-exclamation-circle" id="cpass" data-toggle="tooltip" data-placement="bottom" title="Change password"></i>
+                                    <script>
+                                       $("#cpass").click(function () {
+                                           location.replace("/User/ChangePassword");
+                                       });
+                                    </script>
+                                </a>
+                            </li>
+
+                            <li class="dropdown user user-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <text>Welcome, @HttpContext.Current.Session["Username"].ToString() !</text>
+
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="user-header" style="height:100px">
+                                        <p style="text-align:center">@HttpContext.Current.Session["Username"].ToString()</p>
+                                        <div>
+                                            <i class="fa fa-circle text-success"></i>
+                                            Connected
+                                        </div>
+                                    </li>
+                                    <li class="user-footer">
+                                        <div class="pull-right">
+                                            <a href="#" class="btn btn-default btn-flat" id="so">Sign out</a>
+                                            <script>
+                                               $("#so").click(function () {
+                                                   location.replace("/Home/LogOut");
+                                               });
+                                            </script>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    </li>
+
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-----Left columns-->
+        <aside class="main-sidebar">
+            <section class="sidebar" style="height:auto">
+                <div class="user-panel">
+                    <div class="pull-left image">
+
+                        @{
+                            if (HttpContext.Current.Session["Username"] != null)
+                            {
+                                Html.RenderAction("PartialImage", "PartialViews");
+
+                            }
+                        }
+
+                    </div>
+
+                    <div class="pull-left info">
+                        @if (HttpContext.Current.Session["Username"] != null)
+                        {
+                            <p>@HttpContext.Current.Session["Username"].ToString()</p>
+                            <a href="#">
+                                <i class="fa fa-circle text-success"></i>
+                                Connected
+                            </a>
+                        }
+                    </div>
+                </div>
+                <!---partial menu-->
+                @if (HttpContext.Current.Session["Username"] != null)
+                {
+                    @Html.Action("PartialMenu", "PartialViews");
+                }
+            </section>
+        </aside>
+        <div class="content-wrapper" style="min-height:901px">
+            <script>
+                var wrap = $(".content-wrapper");
+                var divLoad = $('<div></div>').addClass("overlay")
+                                   .css("width", "90%")
+                                   .css("height", "90%")
+                                   .css("position", "absolute")
+                                   .css("z-index", "9999")
+                                   .css("background-color", "#EBEDED");
+
+                var spanLoad = $('<span></span>').addClass("fa fa-refresh fa-spin")
+                    .css("margin-left", "45%")
+                    .css("margin-top", "10%");
+                divLoad.append(spanLoad);
+
+                wrap.append(divLoad);
+
+                $(window).load(function () {
+                    divLoad.hide();
+                });
+
+            </script>
+            @RenderBody()
+            <style>
+                .content-wrapper {
+                    background-color: #edecf5;
+                }
+
+                .pagination > .active > a, .pagination > .active > span {
+                    background-color: #605ca8;
+                    border-color: #605ca8;
+                }
+
+                    .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span:focus, .pagination > .active > span:hover {
+                        background-color: #b6afc6;
+                        border-color: #b6afc6;
+                    }
+
+                a {
+                    color: #605ca8;
+                }
+
+                    a:hover, a:focus {
+                        color: #b6afc6;
+                    }
+
+                input:focus, .form-control:focus {
+                    border-color: #605ca8;
+                }
+
+                .content, .content-header, .content-footer {
+                    margin-left: 50px;
+                    margin-right: 50px;
+                }
+            </style>
+        </div>
+        <footer class="main-footer" style="background-color:#ecf0f5">
+            <div class="pull-right hidden-xs"></div>
+            <strong>Copyright &copy; 2019 &nbsp; <a href="#">Teachers Statistics</a></strong>&nbsp;All rights reserved.
+        </footer>
+    </div>
+
+    <script src="~/AdminLTE-2.3.11/plugins/jQuery/jquery-2.2.3.min.js"></script>
+
+    <script src="~/AdminLTE-2.3.11/bootstrap/js/bootstrap.min.js"></script>
+
+
+
+    <script src="~/AdminLTE-2.3.11/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/AdminLTE-2.3.11/plugins/datatables/dataTables.bootstrap.min.js"></script>
+
+    <script src="~/AdminLTE-2.3.11/plugins/slimScroll/jquery.slimscroll.js"></script>
+    <script src="~/AdminLTE-2.3.11/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+
+    <script src="~/AdminLTE-2.3.11/plugins/fastclick/fastclick.min.js"></script>
+    <script src="~/AdminLTE-2.3.11/dist/js/app.min.js"></script>
+    <script src="~/AdminLTE-2.3.11/dist/js/demo.js"></script>
+
+    <link href="~/Content/jsTree/themes/default/style.css" rel="stylesheet" />
+    <script src="~/Scripts/jsTree3/jstreeNew.js"></script>
+    <link href="~/AdminLTE-2.3.11/plugins/select2/select2.css" rel="stylesheet" />
+    <script src="~/AdminLTE-2.3.11/plugins/select2/select2.js"></script>
+    <script src="~/AdminLTE-2.3.11/plugins/select2/select2.min.js"></script>
+
+    @*<script src="~/js/kendo.all.min.js"></script>*@
+    <script src="~/Scripts/kendo/2014.1.318/kendo.web.min.js"></script>
+   
+   
+    @RenderSection("scripts", required: false)
+</body>
+</html>

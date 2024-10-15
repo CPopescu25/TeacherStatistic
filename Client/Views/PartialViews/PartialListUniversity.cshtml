@@ -1,0 +1,153 @@
+﻿@model TS.DTO.Data
+
+@if (Model.Ok == true)
+{
+    List<TS.DTO.JsTreeFormatDTO> list = new List<TS.DTO.JsTreeFormatDTO>();
+    list = Model.Object.ToObject<List<TS.DTO.JsTreeFormatDTO>>();
+    
+    <div class="box box-primary bp" id="domainSection" style="border-top-color:#605ca8;border-top:3px solid #605ca8;">
+        <div class="box-header with-border">
+            <label style="color:#444;font-weight:700">Universities</label>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus famin"></i>
+                </button>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body bb">
+            <input class="col-lg-5" type="text" value="" id="searchDomenii" placeholder="Search domain...">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div id="jstree_Domenii" class="demo jstree jstree-1 jstree-default col-md-6" role="tree" aria-multiselectable="true" 
+                         tabindex="0" aria-activedescendant="demo_root_1" aria-busy="false"
+                         style="max-height:200px">
+                    </div>
+                    <div id="event_Domenii" class="col-md-6"></div>
+                    <div id="pd" style="visibility:hidden" class="col-md-6"></div>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <style>
+        .green {
+            color: #605ca8;
+        }
+    </style>
+    <script>
+        var dates = @Html.Raw(Json.Encode(list));
+        $(function () {
+            var to = false;
+            $('#searchDomenii').keyup(function () {
+                if(to) { clearTimeout(to); }
+                to = setTimeout(function () {
+                    var v = $('#searchDomenii').val();
+                    $('#jstree_Domenii').jstree(true).search(v);
+                }, 250);
+            });
+
+            $('#jstree_Domenii')
+              .jstree({
+                  "core" : {
+                      "animation" : 0,
+                      "check_callback" : true,
+                      'force_text' : true,
+                      "themes" : { "stripes" : true,"icons":false },
+                      'data' : dates
+                  },
+                  "types" : {
+                      "#" : { "max_children" : 1, "max_depth" : 4, "valid_children" : ["default"] },
+                      "root" : { "icon" : "fa fa-circle green", "valid_children" : ["default"] },
+                      "default" : { "icon" : "fa fa-circle green","valid_children" : ["default","file"] },
+                      "file" : { "icon" : "fa fa-circle green", "valid_children" : [] }
+                  },
+                  "plugins" : ["search","types","checkbox","wholerow" ]
+              });
+        });
+        $(function () {
+            $('#jstree_Domenii').on('changed.jstree', function (e, data) {
+                var jsd = [];
+                var jsdom = [];
+                var domainList=$("<ul></ul>").attr('id','domainsListCandidate')
+                              .css("max-height","200px")
+                              .css("overflow","scroll")
+                              .css("overflow-x","hidden");
+                var domainsBlock=$('#event_Domenii');
+
+                domainList.empty();
+                domainsBlock.empty();
+                for (var i = 0; i < data.selected.length; i++) {
+
+                    var domainListElement=$("<li></li>").addClass("domainsListElementCandidate");
+
+                    jsdom.push(data.selected[i]);
+                    $("#pd").html(jsdom.join(','));
+                    jsd.push(data.instance.get_node(data.selected[i]).text);
+
+                    domainListElement.text(jsd[i]);
+                    domainList.append(domainListElement);
+                }
+                domainsBlock.append(domainList);
+            });
+        });
+        $(function(){
+            $("#jstree_Domenii").jstree(true).deselect_all(true);
+        });
+    </script>
+
+
+    <style>
+        #searchDomenii {
+            box-shadow: inset 0 0 4px #eee;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid silver;
+            font-size: 1.1em;
+        }
+
+        #jstree_Domenii {
+            margin-top: 1.5em;
+            height: 400px;
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+
+        #domainsListCandidate {
+            padding-top: 1em;
+            padding-bottom: 1em;
+        }
+
+        #domainSection {
+            border: 1px solid #e6e6e6;
+            border-radius: 2px;
+            padding: 10px;
+            background-color: white;
+        }
+    </style>
+}
+else
+{
+    <div class="box box-primary bp" style="border-top-color:#605ca8;border-top:3px solid #605ca8;">
+        <div class="box-header with-border">
+            <label style="color:#444;font-weight:700">Locations</label>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus famin"></i>
+                </button>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body bb">
+            <div class="row">
+                @Model.Message
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+}
+
+
+   
+

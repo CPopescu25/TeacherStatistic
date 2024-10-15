@@ -1,0 +1,203 @@
+﻿@model TS.DTO.Data
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+    
+    <link href="~/AdminLTE-2.3.11/plugins/select2/select2.css" rel="stylesheet" />
+    <script src="~/AdminLTE-2.3.11/plugins/select2/select2.js"></script>
+    <script src="~/AdminLTE-2.3.11/plugins/select2/select2.min.js"></script>
+
+
+
+    <section class="content-header">
+        <h3 style="text-align:center">
+            Create new questionnaire<br />
+        </h3><hr />
+        <ol class="breadcrumb" style="border:none">
+            <li><a href="@Url.Action("Index", "Home")"><i class="glyphicon glyphicon-home" style="font-size:x-small"></i> Home</a></li>
+           
+            <li><a href="@Url.Action("Index", "Questionnaire")"><i class="glyphicon glyphicon-list" style="font-size:x-small"></i> All Questionaires</a></li>
+         
+
+            <li class="active"><i class="glyphicon glyphicon-plus-sign" style="font-size:x-small"></i> Add New</li>
+        </ol>
+    </section>
+    <br />
+
+    <section class="content" style="margin-top:50px;">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-horizontal">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label">Select a teacher</label>
+                                @Html.Action("PartialListTeachers", "PartialViews")
+                            </div>
+                            <div class="col-md-4">
+                                <label class="control-label">Students who respond</label><br />
+                                @Html.Action("PartialListStudents", "PartialViews")
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                  
+                    <div class="container-fluid">
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <label class="control-label">Select a questionnaire type</label><br />
+                                @Html.Action("PartialSetType", "PartialViews")
+                            </div>
+
+                            <div class="col-md-4" id="Label" style="visibility:hidden">
+                                <label class="control-label">Question/s</label><br />
+                                <div id="partialQ"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="container-fluid" id="btn" style="visibility:hidden">
+                        <div class="row">
+                            <div class="col-md-6"></div>
+                            <div class="col-md-4">
+                                <input type="button" id="getAllQ" value="Select all questions" style="height:30px;background-color:#605ca8;color:white;border:none" />
+                            </div>
+                        </div><br />
+
+                    </div>
+
+                    <div class="container-fluid" style="margin-top:100px">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-offset-5 col-md-10">
+                                    <input type="button" id="Create" value="Save" onclick="CreateSurvey()" style="height:40px;background-color:#605ca8;color:white;border:none;width:100px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @*<script src="~/ScriptsFunctions/CreateQuestionnaire.js"></script>*@
+<script>
+    $(document).ready(function () {
+
+        $("#SetType").on("change", function () {
+            var setType = $("#SetType option:selected").val();
+            if (setType !== null) {
+                $.ajax({
+                    url: "/PartialViews/PartialMultiListQuestions",
+                    data: { setType: setType },
+                    type: "GET",
+                    success: function (result) {
+
+                        $(result).appendTo("#partialQ");
+                        $("#Label").css("visibility", "visible");
+                        $("#btn").css("visibility", "visible");
+                    }
+                });
+            }
+        });
+
+    });
+    $("#getAllQ").click(function () {
+        $(this).data('clicked', true);
+        $("#Questions option").attr('selected', 'selected');
+        $("#Questions").select2({
+        });
+        $("#Questions").attr('disabled', true);
+    });
+
+
+    function CreateSurvey() {
+        var host = ((location.href).split('/')[2]).split(':')[1];
+
+        var users = [];
+        var emails = [];
+        var n = $("#Employees").val();
+
+        for (var i = 0; i < n.length; i++) {
+            var u = n[i].split(';');
+
+            users.push({ "UserId": u[0] });
+            emails.push({ "Email": u[1], "User_Name": u[2] });
+
+        }
+
+        var questions = [];
+
+        var q = $("#Questions").val();
+        for (var j = 0; j < q.length; j++) {
+            questions.push({ "QuestionsId": q[j] });
+
+        }
+
+        var teacher = $("#Employee option:selected").val();
+        var ts = teacher.split(';');
+        var tid = ts[0];
+        var tname = ts[1];
+
+        var setType = $("#SetType option:selected").val();
+        var datas = {
+            UserId: tid,
+            FirstStatisticQuestions: questions,
+            StudentsTargets: users,
+            SetType: setType,
+            Emails: emails
+
+        };
+
+        //send email
+        var Id = $("#Employee option:selected").val();
+        var user = $("#Employee").data("type");
+
+        var wrap = $(".row");
+        var divLoad = $('<div></div>').addClass("overlay")
+            .css("width", "100%")
+            .css("height", "100%")
+            .css("position", "center");
+
+        var spanLoad = $('<span></span>').addClass("fa fa-refresh fa-spin")
+            .css("margin-left", "45%")
+            .css("margin-top", "10%");
+        divLoad.append(spanLoad);
+
+        wrap.replaceWith(divLoad);
+
+
+        $.ajax({
+            url: "/Questionnaire/Create",
+            data: { data: datas, st: emails, user: tname, host: host },
+            type: "POST",
+            dataType: "json",
+            success: function (result) {
+                if (result.Ok == true) {
+                    toastr.success(result.Message, { showDuration: 300 });
+                    $(".overlay").css("display", "none");
+
+                    setTimeout(function () {
+                        location.reload(true);
+                    }, 3000); //second message will appear 3 seconds later
+
+                    
+                } else {
+                    $(".overlay").css("display", "none");
+                    toastr.error(result.Message, { showDuration: 300 });
+                }
+            },
+            error: function (a, b, c) {
+
+            }
+        });
+
+    }
+</script>
+
+
+
+
+
+

@@ -1,0 +1,126 @@
+﻿@model TS.DTO.Data
+
+<!----------Sweet Alert-->
+<script type="text/javascript" src="~/SweetAlert/sweetalert-master/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/dist/sweetalert.css" />
+<link rel="stylesheet" type="text/css" href="~/SweetAlert/sweetalert-master/themes/twitter/twitter.css" />
+@if (Model.Ok == true && Model.Message == "Success!")
+{
+    TS.DTO.AnswersHelpDTO data = Model.Object.ToObject<TS.DTO.AnswersHelpDTO>();
+
+   <section class="content-header">
+        <h3 style="text-align:center">
+            Details for @data.User
+        </h3>
+        <br />
+      </section>
+
+
+           <section class="content">
+               <div class="row">
+                   <div class="col-md-12">
+                       <div class="form-horizontal">
+                           @if (data.List_Statistics.Count() != 0)
+                           {
+                                <table class="table table-bordered table-striped text-center" id="example1" style="border:1px solid white">
+                                   <thead>
+                                       <tr>
+                                           <th>Nr.chestionar</th>
+                                           <th>n5</th>
+                                           <th>n4</th>
+                                           <th>n3</th>
+                                           <th>n2</th>
+                                           <th>n1</th>
+                                           <th>Punctaj rezultat [P]</th>
+                                           <th>Calificativul rezultat</th>
+                                           <th>Actions</th>
+                                       </tr>
+                                   </thead>
+
+                                   <tbody>
+                                       @foreach (var i in data.List_Statistics)
+                                       {
+                                           <tr>
+                                               <td>@i.Nr</td>
+                                               <td>@i.n5</td>
+                                               <td>@i.n4</td>
+                                               <td>@i.n3</td>
+                                               <td>@i.n2</td>
+                                               <td>@i.n1</td>
+                                               <td>@i.P</td>
+                                               <td>@i.C</td>
+                                               <td>
+                                                   
+                                                       <a class="glyphicon glyphicon-remove-circle tooltipNormal Delete" id="Delete" data-toggle="tooltip" title="Delete!" data-id="@i.AnswerId" onclick="deleteAnswer(this)" style="cursor:pointer"></a><text>&nbsp;</text>
+                                                  
+                                               </td>
+                                           </tr>
+                                       }
+                                   </tbody>
+
+                               </table>
+                           }
+                       </div>
+                   </div>
+               </div>
+           </section>
+
+        
+
+
+    <script type="text/javascript">
+    $(function () {
+        $("#example1").DataTable({
+            "scrollY": "500px",
+            "scrollCollapse": true,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "scrollX": true
+        });
+    });
+    </script>
+
+}
+else if (Model.Ok == true && Model.Message != "Success!")
+{
+    <script>
+
+        swal({
+            title: '@Model.Message',
+            type: "warning",
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "OK!",
+            closeOnConfirm: true
+        },
+             function (isConfirmed) {
+                 if (isConfirmed) {
+                 }
+                 else {
+                     swal("You have not pressed OK!");
+                 }
+             });
+    </script>
+}
+else if (Model.Ok == false)
+{
+    <script>
+
+        swal({
+            title: '@Model.Message',
+            type: "warning",
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "OK!",
+            closeOnConfirm: true
+        },
+             function (isConfirmed) {
+                 if (isConfirmed) {
+                 }
+                 else {
+                     swal("You have not pressed OK!");
+                 }
+             });
+    </script>
+}
+
+
+
+
