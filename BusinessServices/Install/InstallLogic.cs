@@ -221,8 +221,8 @@ namespace BusinessServices.Install
                 user.UserName = splitRow[1];
                 user.Password = splitRow[2];
                 user.Enable = Convert.ToBoolean(splitRow[3]);
-                user.Email = "cozmycosminutza@yahoo.com";
-                user.Phone = "0758087511";
+                user.Email = "test1234@gmail.com";
+                user.Phone = "0011223344";
 
                 _dbContext.Users.Add(user);
 
