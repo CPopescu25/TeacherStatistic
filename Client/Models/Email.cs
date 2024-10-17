@@ -9,9 +9,9 @@ namespace Client.Models
 {
     public class Email:IEmail
     {
-        private const string fromPassword = "Acsolc_25";
+        private const string fromPassword = "Test-1234";
 
-        private const string fromEmail = "cozmy.dumy@gmail.com";
+        private const string fromEmail = "test1234@gmail.com";
 
         private const string fromTitle = "From Statistics Application";
 
